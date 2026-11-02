@@ -4,7 +4,7 @@ import {
   variant, type Bid, type DealResult, type DealSummary, type PoigneeLevel,
 } from "../scoring";
 import { useApp } from "../App";
-import { applyRounding, CONTRACTS, formatPoints, isPlayed, nextDealer, playerCount, POIGNEES, signed, type DealInput, type EntryMode, type Game, type Player, type ScoreOptions } from "../model";
+import { applyRounding, CONTRACTS, formatPoints, hasMisere, isPlayed, misereScores, nextDealer, playerCount, POIGNEES, signed, type DealInput, type EntryMode, type Game, type Misere, type Player, type ScoreOptions } from "../model";
 import { CONTRACT_LABEL, type T } from "../i18n";
 import { Avatar, Header, Icon, MoreIcon, Seg, Sheet } from "../components/ui";
 
@@ -28,14 +28,23 @@ interface State {
   petitAuBout: -1 | 0 | 1;
   poignees: PoigneeLevel[];
   chelem: Chelem;
+  /** seats with a misère d'atout / de tête (house rule) */
+  misereAtout: number[];
+  misereTete: number[];
 }
 
 function initial(game: Game, dealId: string | undefined, defaultMode: EntryMode): State {
+  const found = dealId ? game.deals.find((x) => x.id === dealId) : undefined;
+  const m = found && isPlayed(found) ? found.misere : null;
+  return { ...initialDeal(game, dealId, defaultMode), misereAtout: m ? [...m.atout] : [], misereTete: m ? [...m.tete] : [] };
+}
+
+function initialDeal(game: Game, dealId: string | undefined, defaultMode: EntryMode): State {
   const d = dealId ? game.deals.find((x) => x.id === dealId) : undefined;
   const base: State = {
     mode: defaultMode, taker: null, contract: null, partner: null, oudlers: null, quick: false, won: true, text: "",
     bouts: { petit: false, vingtEtUn: false, excuse: false }, rois: 0, dames: 0, cavaliers: 0, valets: 0, autres: "",
-    petitAuBout: 0, poignees: [], chelem: "none",
+    petitAuBout: 0, poignees: [], chelem: "none", misereAtout: [], misereTete: [],
   };
   if (!d || !isPlayed(d)) return base;
   const s = d.summary;
@@ -105,7 +114,18 @@ export function DealEntry({ game, dealId }: { game: Game; dealId?: string | unde
   const n = playerCount(game);
   const v = variant(n);
   const built = useMemo(() => build(game, s), [game, s]);
-  const result: DealResult | null = useMemo(() => (built ? applyRounding(scoreFromSummary({ ...built.summary, players: n }), opts) : null), [built, n, opts]);
+  // The misère value is the one the deal was saved with, else the table's setting (0 = not played).
+  const editing = dealId ? game.deals.find((d) => d.id === dealId) : undefined;
+  const misereValue = (editing && isPlayed(editing) && editing.misere?.value) || data.settings.misere;
+  const misere: Misere | null = misereValue > 0 && s.misereAtout.length + s.misereTete.length > 0
+    ? { atout: s.misereAtout, tete: s.misereTete, value: misereValue } : null;
+  const result: DealResult | null = useMemo(() => {
+    if (!built) return null;
+    const r = applyRounding(scoreFromSummary({ ...built.summary, players: n }), opts);
+    if (!hasMisere(misere)) return r;
+    const extra = misereScores(n, misere);
+    return { ...r, scores: r.scores.map((x, i) => x + (extra[i] ?? 0)) };
+  }, [built, n, opts, misere?.value, s.misereAtout, s.misereTete]); // eslint-disable-line react-hooks/exhaustive-deps
   const dealNo = dealId ? game.deals.findIndex((d) => d.id === dealId) + 1 : game.deals.length + 1;
   const taker = s.taker !== null ? players[s.taker] : undefined;
 
@@ -122,11 +142,11 @@ export function DealEntry({ game, dealId }: { game: Game; dealId?: string | unde
 
   const save = () => {
     if (!built) return;
-    saveDeal(game.id, { ...(dealId ? { id: dealId } : {}), summary: built.summary, input: built.input });
+    saveDeal(game.id, { ...(dealId ? { id: dealId } : {}), summary: built.summary, input: built.input, misere });
     back();
   };
 
-  const bonusCount = (s.petitAuBout !== 0 ? 1 : 0) + s.poignees.length + (s.chelem !== "none" ? 1 : 0);
+  const bonusCount = (s.petitAuBout !== 0 ? 1 : 0) + s.poignees.length + (s.chelem !== "none" ? 1 : 0) + (misere ? 1 : 0);
 
   return (
     <main className="screen entry">
@@ -220,7 +240,7 @@ export function DealEntry({ game, dealId }: { game: Game; dealId?: string | unde
 
       <button type="button" className="bonus-btn" onClick={() => setBonusOpen(true)}>
         {Icon.plus}<span className="strong">{t("bonus")}</span>
-        <span className="small muted grow left">{bonusCount ? bonusSummary(s, t) : t("bonusHint")}</span>
+        <span className="small muted grow left">{bonusCount ? bonusSummary(s, t, players) : misereValue > 0 ? t("bonusHintMisere") : t("bonusHint")}</span>
       </button>
 
       </>}
@@ -236,13 +256,15 @@ export function DealEntry({ game, dealId }: { game: Game; dealId?: string | unde
         )}
       </div>
 
-      {bonusOpen && <BonusSheet s={s} t={t} onClose={() => setBonusOpen(false)} onApply={(p) => { set(p); setBonusOpen(false); }} />}
+      {bonusOpen && <BonusSheet s={s} t={t} players={players} misereValue={misereValue} onClose={() => setBonusOpen(false)} onApply={(p) => { set(p); setBonusOpen(false); }} />}
     </main>
   );
 }
 
-function bonusSummary(s: State, t: T): string {
+function bonusSummary(s: State, t: T, players: Player[]): string {
   const parts: string[] = [];
+  const names = [...s.misereAtout, ...s.misereTete].map((i) => players[i]?.name).filter(Boolean);
+  if (names.length) parts.push(`${t("misere")} (${names.join(", ")})`);
   if (s.petitAuBout !== 0) parts.push(`${t("petitAuBout")} (${s.petitAuBout > 0 ? t("attack") : t("defence")})`);
   for (const p of s.poignees) parts.push(`${t("poignee")} ${t(p).toLowerCase()}`);
   if (s.chelem !== "none") parts.push(t("chelem"));
@@ -367,7 +389,30 @@ function PasseInfo({ game }: { game: Game }) {
   );
 }
 
-function BonusSheet({ s, t, onClose, onApply }: { s: State; t: T; onClose: () => void; onApply: (p: Partial<State>) => void }) {
+function MiserePicker({ label, hint, players, value, onChange }: { label: string; hint: string; players: Player[]; value: number[]; onChange: (v: number[]) => void }) {
+  return (
+    <div className="col gap4">
+      <span className="small"><span className="strong">{label}</span> <span className="muted">{hint}</span></span>
+      <div className="people" role="group" aria-label={label} style={{ gridTemplateColumns: `repeat(${players.length}, minmax(0, 1fr))` }}>
+        {players.map((p, i) => {
+          const on = value.includes(i);
+          return (
+            <button type="button" key={i} className={on ? "person sm on" : "person sm"} aria-pressed={on}
+              onClick={() => onChange(on ? value.filter((x) => x !== i) : [...value, i].sort((a, b) => a - b))}>
+              <Avatar player={p} size={38} /><span>{p.name}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function BonusSheet({ s, t, players, misereValue, onClose, onApply }: {
+  s: State; t: T; players: Player[]; misereValue: number; onClose: () => void; onApply: (p: Partial<State>) => void;
+}) {
+  const [atout, setAtout] = useState<number[]>(s.misereAtout);
+  const [tete, setTete] = useState<number[]>(s.misereTete);
   const [pab, setPab] = useState(s.petitAuBout);
   const [poignees, setPoignees] = useState<(PoigneeLevel | null)[]>(s.poignees.length ? s.poignees : [null]);
   const [chelem, setChelem] = useState<Chelem>(s.chelem);
@@ -399,7 +444,14 @@ function BonusSheet({ s, t, onClose, onApply }: { s: State; t: T; onClose: () =>
             { value: "failedAnnounced" as const, label: `${t("chelemFailed")} · −200` },
           ]} />
       </section>
-      <button type="button" className="btn-primary" onClick={() => onApply({ petitAuBout: pab, poignees: poignees.filter((p): p is PoigneeLevel => p !== null), chelem })}>{t("apply")}</button>
+      {misereValue > 0 && (
+        <section className="col gap8">
+          <div className="row-between"><span className="label">{t("misere")}</span><span className="small muted">{t("misereGain", { v: misereValue })}</span></div>
+          <MiserePicker label={t("misereAtout")} hint={t("misereAtoutHint")} players={players} value={atout} onChange={setAtout} />
+          <MiserePicker label={t("misereTete")} hint={t("misereTeteHint")} players={players} value={tete} onChange={setTete} />
+        </section>
+      )}
+      <button type="button" className="btn-primary" onClick={() => onApply({ petitAuBout: pab, poignees: poignees.filter((p): p is PoigneeLevel => p !== null), chelem, misereAtout: atout, misereTete: tete })}>{t("apply")}</button>
     </Sheet>
   );
 }

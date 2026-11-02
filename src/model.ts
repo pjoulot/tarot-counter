@@ -44,8 +44,24 @@ interface DealBase {
   dealer: number;
   at: number;
 }
+/**
+ * House rule, off unless the table turns it on: a player holding no trumps (misère d'atout) or no
+ * kings, queens, knights or jacks (misère de tête) wins `value` from each other player, whatever the
+ * contract. Not FFT. The value is kept with the deal so changing the setting never rewrites old games.
+ */
+export interface Misere {
+  /** seats with a misère d'atout */
+  atout: number[];
+  /** seats with a misère de tête */
+  tete: number[];
+  /** points won from each other player, per misère */
+  value: number;
+}
+export const MISERE_VALUES = [10, 20] as const;
+
 export interface PlayedDeal extends DealBase {
   kind?: "jouee";
+  misere?: Misere | null;
   /** The summary the engine scores. Scores are never stored: they are always recomputed from this. */
   summary: Omit<DealSummary, "players">;
   input: DealInput;
@@ -99,9 +115,33 @@ export function applyRounding(r: DealResult, opts: ScoreOptions): DealResult {
   return { ...r, scores: r.scores.map((s) => (s / unit) * rounded) };
 }
 
-export function scoreOf(game: Game, deal: Deal, opts: ScoreOptions = EXACT): DealResult | null {
+/** Each seat's gain or loss from the misères of a deal; sums to zero. */
+export function misereScores(players: number, m: Misere | null | undefined): number[] {
+  const out: number[] = Array.from({ length: players }, () => 0);
+  if (!m || m.value <= 0) return out;
+  for (const seat of [...m.atout, ...m.tete]) {
+    if (seat < 0 || seat >= players) continue;
+    for (let i = 0; i < players; i++) out[i] = (out[i] ?? 0) + (i === seat ? m.value * (players - 1) : -m.value);
+  }
+  return out;
+}
+
+export function hasMisere(m: Misere | null | undefined): m is Misere {
+  return !!m && m.value > 0 && m.atout.length + m.tete.length > 0;
+}
+
+/** The deal's score from the contract alone (after rounding), without any misère. */
+export function contractScoreOf(game: Game, deal: Deal, opts: ScoreOptions = EXACT): DealResult | null {
   if (!isPlayed(deal)) return null;
   return applyRounding(scoreFromSummary({ ...deal.summary, players: playerCount(game) }), opts);
+}
+
+/** The deal's score for each seat: the contract, plus any misère. */
+export function scoreOf(game: Game, deal: Deal, opts: ScoreOptions = EXACT): DealResult | null {
+  const r = contractScoreOf(game, deal, opts);
+  if (!r || !isPlayed(deal) || !hasMisere(deal.misere)) return r;
+  const extra = misereScores(game.players.length, deal.misere);
+  return { ...r, scores: r.scores.map((s, i) => s + (extra[i] ?? 0)) };
 }
 
 export function totals(game: Game, opts: ScoreOptions = EXACT): number[] {

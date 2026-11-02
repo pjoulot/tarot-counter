@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { newId, nextDealer, type Deal, type Game, type Player, type PlayedDeal, type ScoreOptions } from "./model";
+import { newId, nextDealer, type Deal, type Game, type Misere, type Player, type PlayedDeal, type ScoreOptions } from "./model";
 import { load, save, touchPlayers, type Settings, type StoreData } from "./storage";
 import { translator, type T } from "./i18n";
 import { Toast } from "./components/ui";
@@ -53,7 +53,7 @@ interface Ctx {
   savePlayer: (p: Player) => void;
   archivePlayer: (id: string) => void;
   startGame: (playerIds: string[], firstDealer: number, target: { targetDeals: number | null; targetScore: number | null }) => string;
-  saveDeal: (gameId: string, deal: { id?: string | undefined; summary: PlayedDeal["summary"]; input: PlayedDeal["input"] }) => void;
+  saveDeal: (gameId: string, deal: { id?: string | undefined; summary: PlayedDeal["summary"]; input: PlayedDeal["input"]; misere: Misere | null }) => void;
   savePasse: (gameId: string) => void;
   deleteDeal: (gameId: string, dealId: string) => void;
   undoLastDeal: (gameId: string) => void;
@@ -184,8 +184,8 @@ export function App() {
       return id;
     },
     saveDeal: (gameId, deal) => updateGame(gameId, (g) => {
-      if (deal.id) return { ...g, deals: g.deals.map((d) => (d.id === deal.id ? { id: d.id, at: d.at, dealer: d.dealer, summary: deal.summary, input: deal.input } : d)) };
-      return addDeal(g, (dealer) => ({ id: newId(), at: Date.now(), dealer, summary: deal.summary, input: deal.input }));
+      if (deal.id) return { ...g, deals: g.deals.map((d) => (d.id === deal.id ? { id: d.id, at: d.at, dealer: d.dealer, summary: deal.summary, input: deal.input, misere: deal.misere } : d)) };
+      return addDeal(g, (dealer) => ({ id: newId(), at: Date.now(), dealer, summary: deal.summary, input: deal.input, misere: deal.misere }));
     }),
     savePasse: (gameId) => updateGame(gameId, (g) => addDeal(g, (dealer) => ({ id: newId(), at: Date.now(), dealer, kind: "passe" }))),
     deleteDeal: (gameId, dealId) => updateGame(gameId, (g) => ({ ...g, deals: g.deals.filter((d) => d.id !== dealId) })),

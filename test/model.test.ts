@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  applyRounding, cumulative, highlights, nextDealer, plannedDeals, playedDeals, ranking, scoreReached, roundTen, scoreOf, tint, totals,
-  type Deal, type Game, type PlayedDeal,
+  applyRounding, cumulative, highlights, misereScores, nextDealer, plannedDeals, playedDeals, ranking, scoreReached, roundTen, scoreOf, tint, totals,
+  type Deal, type Game, type Misere, type PlayedDeal,
 } from "../src/model";
 import { newPlayer, parseBackup, touchPlayers } from "../src/storage";
 import { countedGames, playerStats, rankedPlayers, tableStats, toCsv } from "../src/stats";
@@ -101,6 +101,43 @@ describe("game length", () => {
     expect(scoreReached(game5(canvasDeals))).toBeNull();
     expect(scoreReached(game5(canvasDeals, { targetScore: 200 }))).toBeNull();
     expect(scoreReached(game5(canvasDeals, { targetScore: 178 }))).toBe(0);
+  });
+});
+
+describe("misère (house rule)", () => {
+  const withMisere = (m: Misere | null): Game => {
+    const g = game5([canvasDeals[0] as PlayedDeal["summary"]]);
+    g.deals = g.deals.map((d) => ({ ...d, misere: m }));
+    return g;
+  };
+
+  it("wins the value from each other player and sums to zero", () => {
+    // 5 players, 10 points: the holder gets 4 × 10 = +40, everyone else −10.
+    expect(misereScores(5, { atout: [3], tete: [], value: 10 })).toEqual([-10, -10, -10, 40, -10]);
+    expect(misereScores(5, { atout: [3], tete: [1], value: 20 }).reduce((a, b) => a + b, 0)).toBe(0);
+  });
+
+  it("counts both kinds, even held by the same player", () => {
+    // Luc (seat 1) has both: 2 × (4 × 10) = +80; others −20 each.
+    expect(misereScores(5, { atout: [1], tete: [1], value: 10 })).toEqual([-20, 80, -20, -20, -20]);
+  });
+
+  it("is added to the contract's score, whatever the contract's result", () => {
+    // Canvas deal 1: Marie +124, Luc +62, others −62. Karim (seat 3) misère d'atout at 10: +40, others −10.
+    expect(totals(withMisere({ atout: [3], tete: [], value: 10 }))).toEqual([114, 52, -72, -22, -72]);
+  });
+
+  it("changes nothing when there is none", () => {
+    expect(totals(withMisere(null))).toEqual(totals(game5([canvasDeals[0] as PlayedDeal["summary"]])));
+    expect(totals(withMisere({ atout: [], tete: [], value: 10 }))).toEqual(totals(game5([canvasDeals[0] as PlayedDeal["summary"]])));
+  });
+
+  it("is added after rounding, so rounding only touches the contract", () => {
+    // Canvas deal 2 is rounded on the contract alone; then Anne (seat 4) adds her misère: +40, others −10.
+    const g = game5([canvasDeals[1] as PlayedDeal["summary"]]);
+    const plain = totals(g, ROUND);
+    g.deals = g.deals.map((d) => ({ ...d, misere: { atout: [4], tete: [], value: 10 } }));
+    expect(totals(g, ROUND)).toEqual(plain.map((v, i) => v + (i === 4 ? 40 : -10)));
   });
 });
 
