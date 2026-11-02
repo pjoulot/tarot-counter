@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Tarot Points</string>
     <string name="title_activity_main">Tarot Points</string>
-    <string name="package_name">com.kalostoria.tarotcounter</string>
-    <string name="custom_url_scheme">com.kalostoria.tarotcounter</string>
+    <string name="package_name">fr.philippejoulot.tarotcounter</string>
+    <string name="custom_url_scheme">fr.philippejoulot.tarotcounter</string>
 </resources>

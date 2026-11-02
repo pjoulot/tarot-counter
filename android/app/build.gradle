@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.kalostoria.tarotcounter"
+    namespace = "fr.philippejoulot.tarotcounter"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.kalostoria.tarotcounter"
+        applicationId "fr.philippejoulot.tarotcounter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

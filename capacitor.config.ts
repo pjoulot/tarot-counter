@@ -2,7 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 // appId is permanent once the app is on the Play Store: change it before the first upload if you want another one.
 const config: CapacitorConfig = {
-  appId: "com.kalostoria.tarotcounter",
+  appId: "fr.philippejoulot.tarotcounter",
   appName: "Tarot Points",
   webDir: "dist",
   backgroundColor: "#FFF6EA",

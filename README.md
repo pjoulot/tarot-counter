@@ -1,6 +1,6 @@
 # Tarot : compteur de points (Tarot Points)
 
-Free score counter for French Tarot at the table (3, 4 or 5 players, FFT rules), from the Kalostoria studio. No account, no ads, works offline. Everything is stored on the phone.
+Free score counter for French Tarot at the table (3, 4 or 5 players, FFT rules), made by Philippe Joulot. No account, no ads, works offline. Everything is stored on the phone.
 
 Scoring lives in `src/scoring/`, a copy of the scoring code from the tarot game's rules engine, so the counter and the game score deals the same way. If a scoring rule ever changes, change it in the game first (it has the tests for the whole engine), then copy `summary.ts` here; `test/scoring.test.ts` holds the same hand-scored tests.
 
@@ -54,8 +54,8 @@ Follows the "C — Convivial" design canvas:
 
 ## Not done yet
 
-- Names: "Tarot Points" under the icon (`APP_NAME` in `src/model.ts`, `capacitor.config.ts`, `android/app/src/main/res/values/strings.xml`); store titles "Tarot : compteur de points" and "French Tarot: Score Counter". A studio Kalostoria app.
-- `appId` `com.kalostoria.tarotcounter` becomes permanent with the first Play Store upload.
+- Names: "Tarot Points" under the icon (`APP_NAME` in `src/model.ts`, `capacitor.config.ts`, `android/app/src/main/res/values/strings.xml`); store titles "Tarot : compteur de points" and "French Tarot: Score Counter".
+- `appId` `fr.philippejoulot.tarotcounter` becomes permanent with the first Play Store upload.
 - Release signing and the Play Store listing. iOS later.
 - Donations: set `DONATE_URL` in `src/screens/About.tsx` (until then the button shows as unavailable). The Android app hides the
   button (`DONATE_IN_ANDROID = false`): Google Play generally wants payments made inside a Play app to go through Play Billing,
