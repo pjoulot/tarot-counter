@@ -1,4 +1,4 @@
-package app.feuilledetarot;
+package com.kalostoria.tarotcounter;
 
 import com.getcapacitor.BridgeActivity;
 

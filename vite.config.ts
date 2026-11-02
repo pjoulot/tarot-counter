@@ -12,8 +12,8 @@ export default defineConfig({
       injectRegister: false, // registered in main.tsx, web only (the Android app has its files locally)
       includeAssets: ["favicon.png", "apple-touch-icon.png", "avatars/*.webp", "art/*.webp"],
       manifest: {
-        name: "Feuille de Tarot",
-        short_name: "Tarot",
+        name: "Tarot : compteur de points",
+        short_name: "Tarot Points",
         description: "Comptez vos parties de tarot, sans calculette.",
         lang: "fr",
         theme_color: "#FFF6EA",

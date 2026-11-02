@@ -1,4 +1,4 @@
-# Feuille de Tarot — project conventions
+# Tarot Points (Tarot : compteur de points) — project conventions
 
 Free score counter for French Tarot (3/4/5 players, FFT rules): React + Vite web app (installable PWA) and an Android app
 via Capacitor. No account, no ads; everything is stored on the phone. Read `README.md` first.

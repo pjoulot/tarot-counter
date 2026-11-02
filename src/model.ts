@@ -2,8 +2,8 @@ import {
   scoreFromSummary, type Bid, type DealResult, type DealSummary, type PlayerCount, type PoigneeLevel,
 } from "./scoring";
 
-/** Working name, until the real one is picked (spec.md §9, open decision 6). */
-export const APP_NAME = "Feuille de Tarot";
+/** The app's short name, as under the icon. The store titles are "Tarot : compteur de points" and "French Tarot: Score Counter". */
+export const APP_NAME = "Tarot Points";
 
 export const ANIMALS = [
   "fox", "owl", "cat", "bear", "rabbit", "frog", "hedgehog", "raccoon", "penguin", "badger", "deer", "mouse",
