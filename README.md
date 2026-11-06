@@ -39,7 +39,7 @@ Follows the "C — Convivial" design canvas:
 - **End of game**: podium, highlights, share, play again with the same table.
 - **Statistics**: all games or last 30 days; per player wins, points, takes made by contract, best deal, best partner, last 10 games.
 - **About** ("Qui fait l’app ?", under the rules in settings): who makes the app, and a donation button.
-- **Settings**: default entry mode, who deals after a passe (FFT: next player; or the same player), round scores to the nearest 10, show the calculation, language (fr/en), theme (auto/light/dark), backup export/import, CSV export.
+- **Settings**: default entry mode, who deals after a passe (FFT: next player; or the same player), round scores to the nearest 10, misère (house rule, off by default: 10 or 20 points from each other player per misère d’atout or de tête, entered in the deal’s bonuses), show the calculation, language (fr/en), theme (auto/light/dark), backup export/import, CSV export.
 
 ## How it works
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { scoreFromSummary } from "../scoring";
 import { useApp } from "../App";
-import { formatPoints, isPlayed, playerCount, scoreOf, signed, type Game } from "../model";
+import { contractScoreOf, formatPoints, hasMisere, isPlayed, playerCount, scoreOf, signed, type Game } from "../model";
 import { CONTRACT_LOWER } from "../i18n";
 import { Avatar, Header } from "../components/ui";
 
@@ -51,6 +51,7 @@ export function DealDetail({ game, dealId }: { game: Game; dealId: string }) {
   }
 
   const r = scoreOf(game, deal, opts);
+  const contract = contractScoreOf(game, deal, opts);
   const exactScores = scoreFromSummary({ ...deal.summary, players: playerCount(game) });
   if (!r) return null;
   const taker = players[r.taker];
@@ -59,9 +60,16 @@ export function DealDetail({ game, dealId }: { game: Game; dealId: string }) {
   const margin = Math.ceil(Math.abs(r.takerHalfPoints - r.neededHalfPoints) / 2);
   const exact = formatPoints(Math.abs(r.takerHalfPoints - r.neededHalfPoints), lang);
   const pab = r.petitAuBout === 0 ? 0 : (r.won ? r.petitAuBout : -r.petitAuBout) * 10;
+  // Rounding applies to the contract alone; a misère is added afterwards.
   const defender = r.scores.findIndex((_, i) => i !== r.taker && i !== r.partner);
   const exactUnit = Math.abs(exactScores.scores[defender] ?? 0);
-  const roundedUnit = Math.abs(r.scores[defender] ?? 0);
+  const roundedUnit = Math.abs(contract?.scores[defender] ?? 0);
+  const m = deal.misere;
+  const n = playerCount(game);
+  const misereLines: [string, string][] = hasMisere(m)
+    ? [...m.atout.map((i) => [t("misereAtout"), i] as const), ...m.tete.map((i) => [t("misereTete"), i] as const)]
+      .map(([label, i]) => [label, `${players[i]?.name ?? "?"} +${m.value * (n - 1)}`])
+    : [];
 
   const chelemText = r.chelem === "madeAnnounced" ? `${t("chelemMadeAnnounced")} · +400` : r.chelem === "made" ? `${t("chelemMade")} · +200` : r.chelem === "failedAnnounced" ? `${t("chelemFailed")} · −200` : null;
   const lines: [string, string][] = [
@@ -74,6 +82,7 @@ export function DealDetail({ game, dealId }: { game: Game; dealId: string }) {
     ...(r.poigneeBonus ? [[t("poigneeLine"), `+${r.poigneeBonus}`] as [string, string]] : []),
     ...(chelemText ? [[t("chelemLine"), chelemText] as [string, string]] : []),
     ...(opts.round10 && exactUnit !== roundedUnit ? [[t("roundScores"), t("roundedTo", { a: exactUnit, b: roundedUnit })] as [string, string]] : []),
+    ...misereLines,
   ];
 
   return (
@@ -93,7 +102,7 @@ export function DealDetail({ game, dealId }: { game: Game; dealId: string }) {
       </section>
 
       <section className="card lines">
-        {lines.map(([k, v]) => <div key={k} className="line"><span className="muted">{k}</span><span className="strong right">{v}</span></div>)}
+        {lines.map(([k, v], i) => <div key={i} className="line"><span className="muted">{k}</span><span className="strong right">{v}</span></div>)}
       </section>
 
       <section className="card pad-card-sm">

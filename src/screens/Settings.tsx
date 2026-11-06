@@ -1,4 +1,5 @@
-import { useRef, useState, type ReactNode } from "react";
+import { Fragment, useRef, useState, type ReactNode } from "react";
+import { MISERE_VALUES } from "../model";
 import { useApp } from "../App";
 import { parseBackup, type Settings } from "../storage";
 import { toCsv } from "../stats";
@@ -30,7 +31,7 @@ function download(name: string, text: string, type: string) {
   void saveFile(name, text, type).catch(() => { /* the person closed the share sheet */ });
 }
 
-type Choice = "passe" | "round" | null;
+type Choice = "passe" | "round" | "misere" | null;
 
 export function SettingsScreen() {
   const { data, t, back, go, setSettings, replaceAll, clearHistory, toast, opts } = useApp();
@@ -69,6 +70,7 @@ export function SettingsScreen() {
         </div>
         <Row label={t("afterPasse")} value={s.passeRule === "next" ? t("nextShort") : t("sameShort")} onClick={() => setChoice("passe")} />
         <Row label={t("roundScores")} value={s.round10 ? t("toTen") : t("no")} onClick={() => setChoice("round")} />
+        <Row label={t("misereSetting")} value={s.misere ? t("miserePts", { v: s.misere }) : t("misereOff")} onClick={() => setChoice("misere")} />
         <div className="set-row"><span className="set-label grow">{t("showCalc")}</span><Toggle on={s.showCalculation} label={t("showCalc")} onChange={(v) => setSettings({ showCalculation: v })} /></div>
       </Group>
 
@@ -123,6 +125,13 @@ export function SettingsScreen() {
           {option(!s.round10, t("no"), t("exact"), () => pick({ round10: false }))}
           {option(s.round10, t("toTen"), t("toTenSub"), () => pick({ round10: true }))}
           <p className="small muted">{t("roundNote")}</p>
+        </Sheet>
+      )}
+      {choice === "misere" && (
+        <Sheet title={t("misereSetting")} onClose={() => setChoice(null)} closeLabel={t("close")}>
+          {option(s.misere === 0, t("misereOff"), t("misereOffSub"), () => pick({ misere: 0 }))}
+          {MISERE_VALUES.map((v) => <Fragment key={v}>{option(s.misere === v, t("miserePts", { v }), t("miserePtsSub", { v }), () => pick({ misere: v }))}</Fragment>)}
+          <p className="small muted">{t("misereNote")}</p>
         </Sheet>
       )}
     </main>

@@ -8,6 +8,8 @@ export interface Settings {
   showCalculation: boolean;
   passeRule: PasseRule;
   round10: boolean;
+  /** misère house rule: points per misère from each other player, 0 = not played (FFT) */
+  misere: 0 | 10 | 20;
   theme: Theme;
 }
 
@@ -27,6 +29,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showCalculation: true,
   passeRule: "next",
   round10: false,
+  misere: 0,
   theme: "auto",
 };
 
