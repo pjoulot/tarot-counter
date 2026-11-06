@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Feuille de Tarot</string>
-    <string name="title_activity_main">Feuille de Tarot</string>
-    <string name="package_name">app.feuilledetarot</string>
-    <string name="custom_url_scheme">app.feuilledetarot</string>
+    <string name="app_name">Tarot Points</string>
+    <string name="title_activity_main">Tarot Points</string>
+    <string name="package_name">fr.philippejoulot.tarotcounter</string>
+    <string name="custom_url_scheme">fr.philippejoulot.tarotcounter</string>
 </resources>

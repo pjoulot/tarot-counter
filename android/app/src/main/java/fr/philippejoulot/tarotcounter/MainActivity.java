@@ -1,4 +1,4 @@
-package app.feuilledetarot;
+package fr.philippejoulot.tarotcounter;
 
 import com.getcapacitor.BridgeActivity;
 

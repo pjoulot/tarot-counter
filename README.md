@@ -1,6 +1,6 @@
-# Feuille de Tarot
+# Tarot : compteur de points (Tarot Points)
 
-Free score counter for French Tarot at the table (3, 4 or 5 players, FFT rules). No account, no ads, works offline. Everything is stored on the phone.
+Free score counter for French Tarot at the table (3, 4 or 5 players, FFT rules), made by Philippe Joulot. No account, no ads, works offline. Everything is stored on the phone.
 
 Scoring lives in `src/scoring/`, a copy of the scoring code from the tarot game's rules engine, so the counter and the game score deals the same way. If a scoring rule ever changes, change it in the game first (it has the tests for the whole engine), then copy `summary.ts` here; `test/scoring.test.ts` holds the same hand-scored tests.
 
@@ -11,7 +11,7 @@ pnpm install          # once
 pnpm android:apk
 ```
 
-That builds the web app, copies it into the Android project, runs Gradle, and leaves `feuille-de-tarot.apk` at the root of the repo.
+That builds the web app, copies it into the Android project, runs Gradle, and leaves `tarot-points.apk` at the root of the repo.
 If a phone is plugged in with USB debugging on, it installs it straight away; otherwise send the APK to the phone and open it
 (Android asks once to allow installs from that app).
 
@@ -54,8 +54,8 @@ Follows the "C — Convivial" design canvas:
 
 ## Not done yet
 
-- Working name "Feuille de Tarot" is a placeholder: `APP_NAME` in `src/model.ts`, the PWA manifest in `vite.config.ts`, `capacitor.config.ts` and `android/app/src/main/res/values/strings.xml`.
-- `appId` (`app.feuilledetarot`) becomes permanent with the first Play Store upload.
+- Names: "Tarot Points" under the icon (`APP_NAME` in `src/model.ts`, `capacitor.config.ts`, `android/app/src/main/res/values/strings.xml`); store titles "Tarot : compteur de points" and "French Tarot: Score Counter".
+- `appId` `fr.philippejoulot.tarotcounter` becomes permanent with the first Play Store upload.
 - Release signing and the Play Store listing. iOS later.
 - Donations: set `DONATE_URL` in `src/screens/About.tsx` (until then the button shows as unavailable). The Android app hides the
   button (`DONATE_IN_ANDROID = false`): Google Play generally wants payments made inside a Play app to go through Play Billing,

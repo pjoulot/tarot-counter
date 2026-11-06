@@ -47,7 +47,7 @@ run("pnpm exec cap sync android");
 run(win ? "gradlew.bat assembleDebug" : "sh gradlew assembleDebug", { cwd: android, env });
 
 const apk = join(android, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
-const out = join(here, "feuille-de-tarot.apk");
+const out = join(here, "tarot-points.apk");
 copyFileSync(apk, out);
 console.log(`\nAPK ready: ${out}`);
 
@@ -55,7 +55,7 @@ const adb = firstExisting([join(sdk, "platform-tools", win ? "adb.exe" : "adb")]
 const devices = adb ? spawnSync(adb, ["devices"], { encoding: "utf8" }).stdout.split("\n").slice(1).filter((l) => /\tdevice$/.test(l)) : [];
 if (adb && devices.length) {
   run(`"${adb}" install -r "${out}"`);
-  console.log("\nInstalled on your phone. Open “Feuille de Tarot”.");
+  console.log("\nInstalled on your phone. Open “Tarot Points”.");
 } else {
   console.log("\nTo install: plug your phone in with USB debugging on and run this again,\nor send the APK to your phone (Drive, e-mail…) and open it there.");
 }
