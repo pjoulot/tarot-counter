@@ -19,6 +19,27 @@ It needs the Android SDK (installed by Android Studio, found in `~/Android/Sdk` 
 (`$JAVA_HOME`, or the one bundled with Android Studio). The first build downloads Gradle and takes a few minutes.
 `pnpm android:open` opens the project in Android Studio instead.
 
+## Release build for Google Play
+
+Create the upload key once, outside the repo, and keep a backup of it and its password. `keytool` asks for one password, used for both the store and the key:
+
+```sh
+mkdir -p ~/keys
+keytool -genkeypair -v -keystore ~/keys/tarot-points-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Then add `android/keystore.properties`, which git ignores. `storeFile` needs the full path, `~` is not expanded:
+
+```properties
+storeFile=/home/you/keys/tarot-points-upload.jks
+storePassword=your password
+keyAlias=upload
+keyPassword=your password
+```
+
+`pnpm android:bundle` then leaves `tarot-points.aab` at the root of the repo, ready to upload in Play Console.
+Raise `versionCode` in `android/app/build.gradle` before each upload: Play refuses a number it has already seen.
+
 ## Run it in a browser
 
 ```sh
@@ -56,7 +77,7 @@ Follows the "C — Convivial" design canvas:
 
 - Names: "Tarot Points" under the icon (`APP_NAME` in `src/model.ts`, `capacitor.config.ts`, `android/app/src/main/res/values/strings.xml`); store titles "Tarot : compteur de points" and "French Tarot: Score Counter".
 - `appId` `fr.philippejoulot.tarotcounter` becomes permanent with the first Play Store upload.
-- Release signing and the Play Store listing. iOS later.
+- The Play Store listing. iOS later.
 - Donations: set `DONATE_URL` in `src/screens/About.tsx` (until then the button shows as unavailable). The Android app hides the
   button (`DONATE_IN_ANDROID = false`): Google Play generally wants payments made inside a Play app to go through Play Billing,
   and apps linking out to a donation page risk rejection. A Play Billing "tip" is the safe way to offer it there later.

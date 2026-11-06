@@ -1,7 +1,11 @@
 node_modules
 dist
 *.apk
+*.aab
+*.jks
+*.keystore
 android/local.properties
+android/keystore.properties
 .env
 .env.*
 *.log

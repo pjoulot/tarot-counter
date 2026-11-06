@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Builds the Android app (debug APK) in one go:  pnpm android:apk
-// 1. builds the web app, 2. copies it into the Android project, 3. runs Gradle,
-// 4. copies the APK next to this package and installs it on a plugged-in phone if adb sees one.
+// Builds the Android app in one go: builds the web app, copies it into the Android project, runs Gradle.
+//   pnpm android:apk     debug APK, installed on a plugged-in phone if adb sees one
+//   pnpm android:bundle  signed release bundle for Google Play
 import { execSync, spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -12,6 +12,12 @@ const here = dirname(dirname(fileURLToPath(import.meta.url)));
 const android = join(here, "android");
 const home = homedir();
 const win = process.platform === "win32";
+const release = process.argv.includes("--release");
+
+if (release && !existsSync(join(android, "keystore.properties"))) {
+  console.error('android/keystore.properties not found: see "Release build for Google Play" in README.md.');
+  process.exit(1);
+}
 
 const run = (cmd, opts = {}) => {
   console.log(`\n$ ${cmd}`);
@@ -44,7 +50,17 @@ console.log(`Android SDK: ${sdk}\nJava: ${env.JAVA_HOME ?? "from PATH"}`);
 
 run("pnpm exec vite build");
 run("pnpm exec cap sync android");
-run(win ? "gradlew.bat assembleDebug" : "sh gradlew assembleDebug", { cwd: android, env });
+const gradle = (task) => run(`${win ? "gradlew.bat" : "sh gradlew"} ${task}`, { cwd: android, env });
+
+if (release) {
+  gradle("bundleRelease");
+  const out = join(here, "tarot-points.aab");
+  copyFileSync(join(android, "app", "build", "outputs", "bundle", "release", "app-release.aab"), out);
+  console.log(`\nBundle ready: ${out}\nUpload it in Play Console.`);
+  process.exit(0);
+}
+
+gradle("assembleDebug");
 
 const apk = join(android, "app", "build", "outputs", "apk", "debug", "app-debug.apk");
 const out = join(here, "tarot-points.apk");
