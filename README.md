@@ -76,7 +76,7 @@ Follows the "C — Convivial" design canvas:
 ## Not done yet
 
 - Names: "Tarot Points" under the icon (`APP_NAME` in `src/model.ts`, `capacitor.config.ts`, `android/app/src/main/res/values/strings.xml`); store titles "Tarot : compteur de points" and "French Tarot: Score Counter".
-- `appId` `fr.philippejoulot.tarotcounter` becomes permanent with the first Play Store upload.
+- `appId` `philippejoulot.tarotcompteurdepoints` becomes permanent with the first Play Store upload.
 - The Play Store listing. iOS later.
 - Donations: set `DONATE_URL` in `src/screens/About.tsx` (until then the button shows as unavailable). The Android app hides the
   button (`DONATE_IN_ANDROID = false`): Google Play generally wants payments made inside a Play app to go through Play Billing,

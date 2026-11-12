@@ -7,10 +7,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "fr.philippejoulot.tarotcounter"
+    namespace = "philippejoulot.tarotcompteurdepoints"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "fr.philippejoulot.tarotcounter"
+        applicationId "philippejoulot.tarotcompteurdepoints"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
