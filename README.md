@@ -51,6 +51,8 @@ Follows the "C — Convivial" design canvas:
 - `src/i18n.ts` — French and English. Contract names stay in French in both.
 - `src/screens/*` — one file per screen; navigation is a stack mirrored in browser history so the back button works.
 - `android/` — Capacitor project (`capacitor.config.ts`). The fox is the launcher icon and splash.
+- `fastlane/metadata/android/` — Play Store texts (fr-FR, en-US), laid out the way fastlane and F-Droid read them, to paste into Play Console.
+- `PRIVACY.md` — privacy policy, in French and English. The store listing links to it on GitHub.
 
 ## Not done yet
 

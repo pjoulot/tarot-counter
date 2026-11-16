@@ -1,0 +1,1 @@
+Première version : le compteur de points du tarot à 3, 4 ou 5 joueurs, avec la feuille de marque, les statistiques et la sauvegarde.
