@@ -1,4 +1,4 @@
-package fr.philippejoulot.tarotcounter;
+package philippejoulot.tarotcompteurdepoints;
 
 import com.getcapacitor.BridgeActivity;
 

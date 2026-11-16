@@ -6,7 +6,7 @@ import { toCsv } from "../stats";
 import { saveFile } from "../native";
 import { Header, Icon, Seg, Sheet, Toggle } from "../components/ui";
 
-export const VERSION = "1.3";
+export const VERSION = "1.0";
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (

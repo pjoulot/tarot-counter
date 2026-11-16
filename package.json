@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "android:apk": "node scripts/build-apk.mjs",
+    "android:apk": "node scripts/build-android.mjs",
+    "android:bundle": "node scripts/build-android.mjs --release",
     "android:open": "pnpm exec vite build && pnpm exec cap sync android && pnpm exec cap open android"
   },
   "dependencies": {
