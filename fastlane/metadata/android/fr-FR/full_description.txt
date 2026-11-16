@@ -1,0 +1,31 @@
+Tarot Points compte les points de vos parties de tarot, donne après donne, selon les règles de la FFT. Plus besoin de calculette ni de feuille raturée : choisissez le preneur et le contrat, entrez les points, l’app fait le reste.
+
+À 3, 4 ou 5 joueurs
+• Prise, garde, garde sans, garde contre
+• À 5, le roi appelé : preneur, partenaire et défense sont comptés chacun à leur part
+• Petit au bout, poignées, chelem annoncé ou non
+• Saisie rapide (« fait de… », « chuté de… »), en points, ou carte par carte si personne ne veut compter
+• « Tout le monde passe » en une touche
+
+La feuille de marque
+• Classement, tableau donne par donne ou courbe des scores
+• Touchez une donne pour voir le calcul, la corriger ou la supprimer
+• Partie libre, en un nombre de donnes, ou jusqu’à un score à atteindre
+• En fin de partie : podium, moments forts, partage, et on rejoue avec la même table
+
+Vos joueurs et vos statistiques
+• Joueurs enregistrés, avec un animal, une couleur ou leur photo
+• Victoires, points, prises réussies par contrat, meilleure donne, meilleur partenaire
+• Sur toutes les parties ou sur les 30 derniers jours
+
+À votre façon
+• Arrondi à la dizaine, donneur après une passe
+• Misère d’atout et de tête en règle maison, désactivée par défaut
+• Les règles du tarot sur une page, pour trancher les débats
+• Thème clair ou sombre, en français ou en anglais
+• Sauvegarde à exporter et à réimporter, export en tableur (CSV)
+
+Gratuite, sans publicité, sans compte
+Vos parties restent sur votre téléphone : rien n’est envoyé ailleurs, et l’app fonctionne sans connexion.
+
+Tarot Points est faite par Philippe, sur son temps libre.

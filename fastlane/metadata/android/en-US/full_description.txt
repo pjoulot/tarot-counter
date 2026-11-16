@@ -1,0 +1,31 @@
+Tarot Points keeps score at French Tarot, deal after deal, following the French Tarot Federation (FFT) rules. No calculator, no scribbled sheet: pick the taker and the contract, enter the points, and the app does the rest.
+
+For 3, 4 or 5 players
+• Prise, garde, garde sans, garde contre
+• At 5, the called king: taker, partner and defenders each get their own share
+• Petit au bout, poignées, chelem announced or not
+• Quick entry ("made by…", "failed by…"), by points, or card by card when nobody wants to count
+• "Everyone passes" in one tap
+
+The score sheet
+• Ranking, deal-by-deal table or score chart
+• Tap a deal to see how it was scored, fix it or delete it
+• Open-ended game, a set number of deals, or up to a target score
+• At the end: podium, highlights, sharing, and a rematch with the same table
+
+Your players and your stats
+• Saved players, with an animal, a colour or their own photo
+• Wins, points, takes made by contract, best deal, best partner
+• Over all games or the last 30 days
+
+Your way
+• Round scores to the nearest 10, choose who deals after a pass
+• Misère d'atout and de tête as a house rule, off by default
+• The tarot rules on one page, to settle arguments
+• Light or dark theme, in English or French
+• Backup export and import, spreadsheet export (CSV)
+
+Free, no ads, no account
+Your games stay on your phone: nothing is sent anywhere, and the app works offline.
+
+Tarot Points is made by Philippe, in his spare time.

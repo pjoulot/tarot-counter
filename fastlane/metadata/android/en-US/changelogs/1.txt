@@ -1,0 +1,1 @@
+First release: French Tarot score counter for 3, 4 or 5 players, with the score sheet, stats and backups.
